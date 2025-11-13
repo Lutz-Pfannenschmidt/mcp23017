@@ -99,7 +99,7 @@ func (m *MCP23017) DigitalWrite(pin Pin, value bool) error {
 	if value {
 		current |= (1 << (uint8(pin) % 8))
 	} else {
-		current ^= (1 << (uint8(pin) % 8))
+		current &^= (1 << (uint8(pin) % 8))
 	}
 	return m.writeRegister(gpioReg, current)
 }
