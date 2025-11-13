@@ -34,6 +34,8 @@ const (
 const (
 	gpioA  byte = 0x12
 	gpioB  byte = 0x13
+	olataA byte = 0x14
+	olataB byte = 0x15
 	iodirA byte = 0x00
 	iodirB byte = 0x01
 	gppuA  byte = 0x0C
@@ -86,9 +88,9 @@ func (m *MCP23017) SetPinMode(pin Pin, isInput bool) error {
 func (m *MCP23017) DigitalWrite(pin Pin, value bool) error {
 	var gpioReg byte
 	if pin <= 7 {
-		gpioReg = gpioA
+		gpioReg = olataA
 	} else {
-		gpioReg = gpioB
+		gpioReg = olataB
 	}
 	current, err := m.readRegister(gpioReg)
 	if err != nil {
