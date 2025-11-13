@@ -52,7 +52,9 @@ func NewMCP23017(bus i2c.Bus, addr uint16) *MCP23017 {
 	}
 }
 
-func (m *MCP23017) readRegister(reg byte) (byte, error) {
+// ReadRegister reads a single byte from the specified register.
+// DO NOT USE if you don't know what you are doing!
+func (m *MCP23017) ReadRegister(reg byte) (byte, error) {
 	write := []byte{reg}
 	read := make([]byte, 1)
 	if err := m.Dev.Tx(write, read); err != nil {
@@ -61,7 +63,9 @@ func (m *MCP23017) readRegister(reg byte) (byte, error) {
 	return read[0], nil
 }
 
-func (m *MCP23017) writeRegister(reg byte, value byte) error {
+// WriteRegister writes a single byte to the specified register.
+// DO NOT USE if you don't know what you are doing!
+func (m *MCP23017) WriteRegister(reg byte, value byte) error {
 	write := []byte{reg, value}
 	return m.Dev.Tx(write, nil)
 }
@@ -73,7 +77,7 @@ func (m *MCP23017) SetPinMode(pin Pin, isInput bool) error {
 	} else {
 		iodirReg = iodirB
 	}
-	current, err := m.readRegister(iodirReg)
+	current, err := m.ReadRegister(iodirReg)
 	if err != nil {
 		return err
 	}
@@ -82,7 +86,7 @@ func (m *MCP23017) SetPinMode(pin Pin, isInput bool) error {
 	} else {
 		current &^= (1 << (uint8(pin) % 8))
 	}
-	return m.writeRegister(iodirReg, current)
+	return m.WriteRegister(iodirReg, current)
 }
 
 func (m *MCP23017) DigitalWrite(pin Pin, value bool) error {
@@ -92,7 +96,7 @@ func (m *MCP23017) DigitalWrite(pin Pin, value bool) error {
 	} else {
 		gpioReg = olataB
 	}
-	current, err := m.readRegister(gpioReg)
+	current, err := m.ReadRegister(gpioReg)
 	if err != nil {
 		return err
 	}
@@ -101,7 +105,7 @@ func (m *MCP23017) DigitalWrite(pin Pin, value bool) error {
 	} else {
 		current &^= (1 << (uint8(pin) % 8))
 	}
-	return m.writeRegister(gpioReg, current)
+	return m.WriteRegister(gpioReg, current)
 }
 
 func (m *MCP23017) DigitalReadBank(bank Bank) (byte, error) {
@@ -111,15 +115,15 @@ func (m *MCP23017) DigitalReadBank(bank Bank) (byte, error) {
 	} else {
 		gpioReg = gpioB
 	}
-	return m.readRegister(gpioReg)
+	return m.ReadRegister(gpioReg)
 }
 
 func (m *MCP23017) DigitalReadAll() (byte, byte, error) {
-	gpioAVal, err := m.readRegister(gpioA)
+	gpioAVal, err := m.ReadRegister(gpioA)
 	if err != nil {
 		return 0, 0, err
 	}
-	gpioBVal, err := m.readRegister(gpioB)
+	gpioBVal, err := m.ReadRegister(gpioB)
 	if err != nil {
 		return 0, 0, err
 	}
@@ -133,7 +137,7 @@ func (m *MCP23017) DigitalRead(pin Pin) (bool, error) {
 	} else {
 		gpioReg = gpioB
 	}
-	current, err := m.readRegister(gpioReg)
+	current, err := m.ReadRegister(gpioReg)
 	if err != nil {
 		return false, err
 	}
@@ -147,7 +151,7 @@ func (m *MCP23017) SetPullUp(pin Pin, enable bool) error {
 	} else {
 		gppuReg = gppuB
 	}
-	current, err := m.readRegister(gppuReg)
+	current, err := m.ReadRegister(gppuReg)
 	if err != nil {
 		return err
 	}
@@ -156,7 +160,7 @@ func (m *MCP23017) SetPullUp(pin Pin, enable bool) error {
 	} else {
 		current ^= (1 << (uint8(pin) % 8))
 	}
-	return m.writeRegister(gppuReg, current)
+	return m.WriteRegister(gppuReg, current)
 }
 
 // func main() {
